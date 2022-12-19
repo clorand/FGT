@@ -47,6 +47,27 @@ public class F11
 	{
 		return new F11((this.value.multiply(f.getValue().modInverse(M))).mod(M));
 	}
+	  
+	@Override
+	public boolean equals(Object o)
+	{
+    // If the object is compared with itself then return true 
+    if (o == this) {
+        return true;
+    }
+
+    /* Check if o is an instance of Complex or not
+      "null instanceof [type]" also returns false */
+    if (!(o instanceof F11)) {
+        return false;
+    }
+     
+    // typecast o to Complex so that we can compare data members
+    F11 f = (F11) o;
+     
+    // Compare the data members and return accordingly
+    return this.value.equals(f.value);
+	}
 	
 	public static void main(String[] args)
 	{
@@ -81,6 +102,18 @@ public class F11
 			F11 fj = new F11(j);
 			System.out.println(""+fi+"/"+fj+"="+fi.divide(fj));
 		}
+		
+		for (int i=0; i<11; i++)
+		{
+			for (int j=0; j<11; j++)
+		{
+			F11 fi = new F11(i);
+			F11 fj = new F11(j);
+			System.out.print(" "+(fi.equals(fj)));
+		}
+			System.out.println("");
+		}
+
 		
 	}
 

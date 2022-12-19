@@ -135,18 +135,97 @@ public class pF11
 		return ret;
 	}
 
-	public  pF11 multiply(pF11 f)
+	public  pF11 multiply(pF11 pf)
 	{
+		pF11 ZERO = new pF11(0);
+		
+		if ((this.isInf()&&ZERO.equals(pf))||(this.equals(ZERO)&&pf.isInf()))
+		{
+			return new pF11("NAN");
+		}
+		else
+		{
+			if (this.isInf()||pf.isInf())
+			{
+				return new pF11("INF");
+			}
+			else
+			{
+				F11 f0 = (F11) this.value;
+				F11 f1 = (F11) pf.value;
+				
+				return new pF11(f0.multiply(f1));
+			}
+		}
+		
+	}
+
+	public  pF11 divide(pF11 pf)
+	{
+		pF11 ZERO = new pF11(0);
 		pF11 ret = null;
 		
+		if ((this.isInf()&&pf.isInf())||(this.equals(ZERO)&&pf.equals(ZERO)))
+		{
+			return new pF11("NAN");
+		}
+		else
+		{
+			if (this.isInf()||pf.isInf())
+			{
+				if (this.isInf())
+					return new pF11("INF");
+				
+				if (pf.isInf())
+					return new pF11(0);
+			}
+			else
+			{
+				if (pf.equals(ZERO))
+				{
+					return new pF11("INF");
+				}
+				else
+				{
+					F11 f0 = (F11) this.value;
+					F11 f1 = (F11) pf.value;
+				
+					return new pF11(f0.divide(f1));
+				}
+			}
+		}
 		
-		return null;
+		return ret;
 	}
 	
-	public  pF11 divide(pF11 f)
+	@Override
+	public boolean equals(Object o)
 	{
-		return null;
+    if (o == this) {
+        return true;
+    }
+    
+    if (!(o instanceof pF11)) {
+        return false;
+    }
+     
+    pF11 pf = (pF11) o;
+    
+    
+    if ((this.value instanceof F11)&&(pf.value instanceof F11))
+    {
+    	F11 f1 = (F11) this.value;
+    	F11 f2 = (F11) pf.value;
+    	
+    	return f1.equals(f2);
+    }
+    else
+    {
+    	return (""+this.value).equals(""+pf.value);
+    }
+    
 	}
+
 	
 	public static void main(String[] args)
 	{
@@ -183,6 +262,40 @@ public class pF11
 		pF11 nan = new pF11("NAN");
 		
 		System.out.println(""+nan);
+
+		for (int i=0; i<12; i++)
+		{
+			for (int j=0; j<12; j++)
+			{
+				pF11 fi = new pF11(i);
+				pF11 fj = new pF11(j);
+				System.out.print(" "+fi.equals(fj));
+			}
+			System.out.println("");
+		}
+
+		for (int i=0; i<12; i++)
+		{
+			for (int j=0; j<12; j++)
+			{
+				pF11 fi = new pF11(i);
+				pF11 fj = new pF11(j);
+				System.out.print(" "+fi.multiply(fj));
+			}
+			System.out.println("");
+		}
+
+		for (int i=0; i<12; i++)
+		{
+			for (int j=0; j<12; j++)
+			{
+				pF11 fi = new pF11(i);
+				pF11 fj = new pF11(j);
+				System.out.print(" "+fi.divide(fj));
+			}
+			System.out.println("");
+		}
+		
 		
 	}
 }
