@@ -1,4 +1,3 @@
-
 package matthieu;
 
 import java.math.BigInteger;
@@ -7,7 +6,9 @@ public class pF11
 {
 	
 	public static final String INF = "INF";
-	
+
+	public static final String NAN = "NAN";
+
 	private Object value;
 	
 	public pF11(F11 f)
@@ -38,7 +39,14 @@ public class pF11
 		}
 		catch(Exception e)
 		{
-			this.value = INF;
+			if (INF.equals(s))
+			{
+				this.value = INF;
+			}
+			else
+			{
+				this.value = NAN;
+			}
 		}
 	}
 	
@@ -56,6 +64,12 @@ public class pF11
 	{
 		return (this.value instanceof String)&&((String)this.value).equals(INF);
 	}
+
+	public boolean isNan()
+	{
+		return (this.value instanceof String)&&((String)this.value).equals(NAN);
+	}
+
 	
 	public F11 toF11() throws Exception
 	{
@@ -78,6 +92,12 @@ public class pF11
 	{
 		return new pF11("INF");
 	}
+
+	public pF11 getNan()
+	{
+		return new pF11("NAN");
+	}
+
 	
 	public  pF11 add(pF11 pf)
 	{
@@ -117,6 +137,9 @@ public class pF11
 
 	public  pF11 multiply(pF11 f)
 	{
+		pF11 ret = null;
+		
+		
 		return null;
 	}
 	
@@ -157,6 +180,9 @@ public class pF11
 			System.out.println("");
 		}
 		
+		pF11 nan = new pF11("NAN");
+		
+		System.out.println(""+nan);
 		
 	}
 }
