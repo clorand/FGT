@@ -1,4 +1,3 @@
-
 package matthieu;
 
 import java.math.BigInteger;
