@@ -1,8 +1,10 @@
-package matthieu;
+package unitTests;
 
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
+import matthieu.SL11;
 
 public class SL11unitTest {
 	
