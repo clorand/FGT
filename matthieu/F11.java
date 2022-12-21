@@ -6,6 +6,10 @@ public class F11
 {
 	private static final BigInteger M = new BigInteger("11");
 	
+	static final BigInteger ZERO = new BigInteger("0");
+	
+	static final BigInteger ONE = new BigInteger("1");
+	
 	private BigInteger value;
 
 	public BigInteger getValue()
@@ -46,6 +50,11 @@ public class F11
 	public  F11 divide(F11 f)
 	{
 		return new F11((this.value.multiply(f.getValue().modInverse(M))).mod(M));
+	}
+	
+	public F11 inverse()
+	{
+		return new F11(this.value.modInverse(M));
 	}
 	  
 	@Override
@@ -114,7 +123,11 @@ public class F11
 			System.out.println("");
 		}
 
-		
+		for (int i=1; i<11; i++)
+		{
+			F11 f = new F11(i);
+			System.out.println(""+i+" "+f.inverse());
+		}
 	}
 
 }
