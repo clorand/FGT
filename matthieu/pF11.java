@@ -5,9 +5,9 @@ import java.math.BigInteger;
 public class pF11 
 {
 	
-	public static final String INF = "INF";
+	public static final String INF  = "INF";
 
-	public static final String NAN = "NAN";
+	public static final String NAN  = "NAN";
 
 	private Object value;
 	
