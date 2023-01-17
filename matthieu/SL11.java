@@ -2,6 +2,9 @@ package matthieu;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SL11 
 {
@@ -68,6 +71,32 @@ public class SL11
 		 this.setIndex(121*i+11*j+k);
 	}
 	
+	public SL11 transpose() throws Exception
+	{
+		SL11 ret = null;
+		int index = this.getIndex();
+		
+		int i = index / 121;
+		int j = index / 11 % 11;
+		int k = index % 11;
+		
+		if (i == 0)
+		{
+			F11 l = new F11(j);
+			F11 u = new F11(k);
+			F11 l_ = l.inverse().negate();
+			F11 u_ = ZERO.subtract(u.multiply(l).multiply(l));
+			ret = new SL11(i, l_.getValue().intValue(), u_.getValue().intValue());
+		}
+		else 
+		{
+			ret = new SL11(i, k, j);
+		}
+		
+		
+		return ret;
+	}
+	
 	private SL11(F11 a_, F11 l_, F11 u_) throws Exception
 	{
 		if (a_.equals(ZERO))
@@ -86,7 +115,7 @@ public class SL11
 		}
 		else
 		{
-			this.setA(a_);
+			this.a = a_;
 			this.b = a_.multiply(u_);
 			this.c = l_.divide(a_);
 			this.d = (ONE.add(l_.multiply(u_))).divide(a_);
@@ -123,6 +152,51 @@ public class SL11
 		
 		return new SL11(i, j, k);
 	}
+		
+	public SL11 pow(int n) throws Exception
+	{
+		SL11 ret = new SL11(121);
+		SL11 g = this.copy();
+		
+		if (n%2==1)
+			ret = ret.multiply(g);
+		
+		int i = n/2;
+		
+		while (i>0)
+		{
+			g = g.multiply(g);
+			if (i%2==1)
+				ret = ret.multiply(g);
+			i = i/2;
+		}
+		
+		return ret;
+	}
+	
+	public SL11 copy() throws Exception
+	{
+		return new SL11(this.getIndex());
+	}
+	
+	public boolean isIdentity()
+	{
+		return this.getIndex()==121;
+	}
+	
+	public int getOrder(int i) throws Exception
+	{
+		int order = 1;
+		SL11 sl = new SL11(i);
+		SL11 g = sl.copy();
+		
+		while (!sl.isIdentity())
+		{
+			sl = sl.multiply(g);
+		}
+		
+		return order;
+	}
 	
 	@Override
 	public boolean equals(Object o)
@@ -151,6 +225,15 @@ public class SL11
 					&& d.equals(ONE);
 	}
 	
+	public boolean isMinusUnity()
+	{
+		return   getA().equals(new F11(10))
+					&& b.equals(ZERO)
+					&& c.equals(ZERO)
+					&& d.equals(new F11(10));
+	}
+	 
+	
 	public boolean isDiagonal() {
 		return b.equals(ZERO)
 				&& c.equals(ZERO);
@@ -164,6 +247,11 @@ public class SL11
 		return b.equals(ZERO);
 	}
 
+	public SL11 negate() throws Exception
+	{
+		SL11 ret = new SL11(this.getIndex());
+		return ret.multiply(new SL11(1210));
+	}
 	
 	public String toString()
 	{
@@ -360,7 +448,60 @@ public class SL11
     }		
 	}
 
+	public static void generateA0Table() throws Exception
+	{
+		FileWriter fw = null;
+		
+    try {
+      fw = new FileWriter("A0Table.txt");  
+      
+  		for (int i=11; i<121; i++)
+  		{
+  			String line = "";		 
+  			for (int j=11; j<121; j++)
+  			{
+  				SL11Subgroup G =  SL11Subgroup.generateSubgroup(i, j);
+  				line += G.getOrder()+" \t";
+
+  			}
+  			System.out.println(""+i+": \t"+line);
+  			fw.write(line+"\n");
+  		}
+      fw.close();
+      System.out.println("Successfully wrote to the file.");
+    } catch (IOException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }		
+	}
 	
+	public static void generateA0TransposeTable() throws Exception
+	{
+		FileWriter fw = null;
+		
+    try {
+      fw = new FileWriter("A0TransposeTable.txt");  
+      
+  		for (int i=11; i<121; i++)
+  		{
+  			String line = "";		 
+  			int i_ = new SL11(i).transpose().getIndex();
+  			for (int j=11; j<121; j++)
+  			{
+  				SL11Subgroup G =  SL11Subgroup.generateSubgroup(i_, j);
+  				line += G.getOrder()+" \t";
+
+  			}
+  			System.out.println(""+i+": \t"+line);
+  			fw.write(line+"\n");
+  		}
+      fw.close();
+      System.out.println("Successfully wrote to the file.");
+    } catch (IOException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+    }		
+	}
 	
 	public int getOrder() throws Exception
 	{
@@ -376,31 +517,54 @@ public class SL11
 		return order;
 	}
 	
-	public static void main(String[] args) throws Exception
+	public static List<Integer> getElementsOfOrder(int n) throws Exception
 	{
+		List<Integer> elements = new ArrayList<Integer>();
 		
-		//generateMultiplicationTable();
-		//generateTransposeMultiplicationTable();
-		//generateUpperTable();
-		//generateLowerTable();
-		//generateDiagonalTable();
-
-		/*
-		 * 
-		int maxOrder = 0;
-		for (int index = 11; index<1331; index++)
+		for (int index=11; index<1331;index++)
 		{
 			SL11 sl = new SL11(index);
-			int order = sl.getOrder();
-			if (order>maxOrder)
-				maxOrder = order;
-			if (order==3)
-			System.out.println("index:"+sl.getIndex()+", order: "+order);
+			if ((sl.getOrder()==n)&&!(elements.contains(sl.getIndex())))
+				elements.add(sl.getIndex());
 		}
 		
-		System.out.println("max order="+maxOrder);
-		*/
+		Collections.sort(elements);
+		
+		return elements;
 	}
-
 	
+	public static List<Integer> getGeneratedCycle(int n) throws Exception
+	{
+		List<Integer> elements = new ArrayList<Integer>();
+		SL11 g = new SL11(n);
+		SL11 sl = new SL11(n);
+		int order = g.getOrder();
+		elements.add(121);
+		elements.add(g.getIndex());
+		
+		
+		for (int i=2; i<order; i++)
+		{
+			sl = sl.multiply(g);
+			elements.add(sl.getIndex());
+		}
+		
+		Collections.sort(elements);
+		return elements;
+	}
+	
+	public static void main(String[] args) throws Exception
+	{
+
+		long startTime = System.nanoTime();
+		
+		generateA0TransposeTable();
+		
+    long elapsedTime = System.nanoTime() - startTime;
+    
+    System.out.println("Execution Time: "
+            + elapsedTime/1000000000
+            + " seconds.");
+
+	}	
 }

@@ -57,6 +57,11 @@ public class F11
 		return new F11(this.value.modInverse(M));
 	}
 	  
+	public F11 negate()
+	{
+		return new F11(this.value.negate().mod(M));
+	}
+	
 	@Override
 	public boolean equals(Object o)
 	{
@@ -129,5 +134,4 @@ public class F11
 			System.out.println(""+i+" "+f.inverse());
 		}
 	}
-
 }
